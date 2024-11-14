@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data:
+  welcome.message: "Hello, Kubernetes!"
+  database.url: "mongodb://mongo:27017"

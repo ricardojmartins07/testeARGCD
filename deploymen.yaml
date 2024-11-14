@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app-container
+          image: nginx
+          # Montar o Persistent Volume Claim (PVC) no pod
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"  # Diretório no container
+              name: storage-volume
+            - mountPath: "/etc/config"
+              name: config-volume
+          # Usar o ConfigMap como variáveis de ambiente
+          env:
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: my-config
+                  key: welcome.message
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: my-config
+                  key: database.url
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: my-pvc  # Nome do PVC
+        - name: config-volume
+          configMap:
+            name: my-config  # Nome do ConfigMap
